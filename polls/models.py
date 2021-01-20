@@ -27,5 +27,5 @@ class FinishedPoll(models.Model):
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, blank=True, on_delete='cascade')
-    finished_poll = models.ForeignKey(FinishedPoll, blank=True, on_delete='cascade')
+    finished_poll = models.ForeignKey(FinishedPoll, blank=True, on_delete='cascade', null=True)
     text = models.CharField(default='', null=True, max_length=360)
