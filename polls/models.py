@@ -20,15 +20,12 @@ class Poll(models.Model):
     questions = models.ManyToManyField(Question, blank=True)
 
 
-class TinyUser(models.Model):
-    pass
-
-
 class FinishedPoll(models.Model):
     poll_id = models.ForeignKey(Poll, blank=True, on_delete='cascade')
-    user_id = models.ForeignKey(TinyUser, blank=True, on_delete='cascade')
+    user_id = models.IntegerField(blank=True)
 
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, blank=True, on_delete='cascade')
+    finished_poll = models.ForeignKey(FinishedPoll, blank=True, on_delete='cascade')
     text = models.CharField(default='', null=True, max_length=360)
