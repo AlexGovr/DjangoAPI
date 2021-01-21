@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import permissions
-from rest_framework.decorators import action
+from rest_framework.decorators import action, permission_classes
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
-from .models import Poll
-from .serializers import PollSerializer
+from .models import Poll, Question
+from .serializers import PollSerializer, QuestionSerializer
 
 
 class PollViewSet(viewsets.ModelViewSet):
@@ -18,20 +19,43 @@ class PollEditViewSet(PollViewSet):
     
     @action(detail=False, url_path='save', methods=['get', 'post'])
     def save(self, request):
-        # if request
-        print('yaaaaay')
-        print(request.data)
-        srl = self.serializer_class(data=request.data)
+        if not request.user.is_authenticated:
+            return self.not_auth()
+
+        poll = self.get_instance(int(request.data['id']))
+        srl = self.serializer_class(instance=poll, data=request.data)
         srl.is_valid(raise_exception=True)
-        print(srl.validated_data)
         srl.save()
         context = {'status': 'poll editing successful'}
         return Response(context)
 
-    def post(self, request):
-        # if request
+    @action(detail=False, url_path='create', methods=['get', 'post'])
+    def create_poll(self, request):
+        if not request.user.is_authenticated:
+            return self.not_auth()
+        
         srl = self.serializer_class(data=request.data)
         srl.is_valid(raise_exception=True)
-        srl.save()
-        context = {'status': 'poll editing successful'}
+        new_poll = srl.save()
+        context = {'status': 'poll created successfuly', 'poll_id': f'{new_poll.id}'}
         return Response(context)
+
+    @action(detail=False, url_path='delete', methods=['get', 'post'])
+    def delete_poll(self, request):
+        if not request.user.is_authenticated:
+            return self.not_auth()
+        
+        poll = self.get_instance(int(request.data['id']))
+        poll.delete()
+        context = {'status': 'poll deleted successfuly'}
+        return Response(context)
+    
+    def not_auth(self):
+        return Response({'status': 'rejected: not authenticated'})
+
+    def get_instance(self, id_):
+        return Poll.objects.get(id=id_)
+
+class QuestionViewSet(viewsets.ModelViewSet):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
