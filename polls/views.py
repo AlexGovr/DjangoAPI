@@ -1,8 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from rest_framework import permissions
-from rest_framework.decorators import action, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import Poll, Question
 from .serializers import PollSerializer, QuestionSerializer
@@ -14,7 +12,7 @@ class PollViewSet(viewsets.ModelViewSet):
     """
     queryset = Poll.objects.all().order_by('-date_start', ).reverse()
     serializer_class = PollSerializer
-    
+
 class PollEditViewSet(PollViewSet):
     
     @action(detail=False, url_path='save', methods=['get', 'post'])
@@ -59,3 +57,4 @@ class PollEditViewSet(PollViewSet):
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
