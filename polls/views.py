@@ -1,8 +1,9 @@
 
 from rest_framework import viewsets
 from rest_framework.response import Response
-from .models import Poll, Question
-from .serializers import PollSerializer, QuestionSerializer
+from rest_framework.decorators import action
+from .models import FinishedPoll, Poll, Question
+from .serializers import PollSerializer, QuestionSerializer, FinishedPollSerializer, AnswerSerializer
 
 
 class BasicViewSet(viewsets.ModelViewSet):
@@ -41,3 +42,22 @@ class PollViewSet(BasicViewSet):
 class QuestionViewSet(BasicViewSet):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
+
+
+class FinishedPollViewSet(viewsets.ModelViewSet):
+    queryset = FinishedPoll.objects.none()
+    serializer_class = FinishedPollSerializer
+
+    def list(self, request, *args, **kwargs):
+        user_id = request.data['id']
+        self.queryset = FinishedPoll.objects.filter(user_id=user_id)
+        return super().list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        print('here')
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            print(e)
+            return Response({'error': str(e)})
+
