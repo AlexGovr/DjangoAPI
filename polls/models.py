@@ -12,7 +12,7 @@ class Question(models.Model):
     question_type = models.CharField(choices=TYPE_CHOICES, blank=True, default=_TEXT, max_length=20)
 
     def __str__(self):
-        return f'{self.type}: {self.text}'
+        return f'{self.question_type}: {self.text}'
 
 
 class Poll(models.Model):
