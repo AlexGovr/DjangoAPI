@@ -6,7 +6,14 @@ from .models import Poll, Question
 from .serializers import PollSerializer, QuestionSerializer
 
 
-class PollViewSet(viewsets.ModelViewSet):
+class BasicViewSet(viewsets.ModelViewSet):
+    def not_auth(self):
+        return Response({'status': 'rejected: not authenticated'})
+
+    def get_instance(self, id_):
+        return self.queryset(id=id_)
+
+class PollViewSet(BasicViewSet):
     """
     API endpoint that allows polls to be viewed or edited
     """
@@ -47,12 +54,6 @@ class PollEditViewSet(PollViewSet):
         poll.delete()
         context = {'status': 'poll deleted successfuly'}
         return Response(context)
-    
-    def not_auth(self):
-        return Response({'status': 'rejected: not authenticated'})
-
-    def get_instance(self, id_):
-        return Poll.objects.get(id=id_)
 
 class QuestionViewSet(viewsets.ModelViewSet):
     queryset = Question.objects.all()
