@@ -9,7 +9,10 @@ class Question(models.Model):
     _ONE = 'choose_one'
     _MANY = 'choose_many'
     TYPE_CHOICES = [(_TEXT, 'text'), (_ONE, 'choose one answer'), (_MANY, 'choose one or more answers')]
-    type = models.CharField(choices=TYPE_CHOICES, blank=True, default=_TEXT, max_length=20)
+    question_type = models.CharField(choices=TYPE_CHOICES, blank=True, default=_TEXT, max_length=20)
+
+    def __str__(self):
+        return f'{self.type}: {self.text}'
 
 
 class Poll(models.Model):
@@ -19,13 +22,21 @@ class Poll(models.Model):
     description = models.CharField(default='', null=True, max_length=80)
     questions = models.ManyToManyField(Question, blank=True)
 
+    def __str__(self):
+        return f'{self.name}: {self.date_start} -- {self.date_end}'
 
 class FinishedPoll(models.Model):
-    poll_id = models.ForeignKey(Poll, blank=True, on_delete='cascade')
+    poll = models.ForeignKey(Poll, blank=True, on_delete=models.CASCADE)
     user_id = models.IntegerField(blank=True)
+
+    def __str__(self):
+        return f'user_id: {self.user_id}, poll_id: {self.poll.id}'
 
 
 class Answer(models.Model):
-    question = models.ForeignKey(Question, blank=True, on_delete='cascade')
-    finished_poll = models.ForeignKey(FinishedPoll, blank=True, on_delete='cascade', null=True)
+    question = models.ForeignKey(Question, blank=True, on_delete=models.CASCADE)
+    finished_poll = models.ForeignKey(FinishedPoll, blank=True, on_delete=models.CASCADE, null=True)
     text = models.CharField(default='', null=True, max_length=360)
+
+    def __str__(self):
+        return f'q_id: {self.question.id}, finidhed_poll_id: {self.finished_poll.id}, text: {self.text}'
