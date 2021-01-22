@@ -1,11 +1,12 @@
 from django.urls import include, path
 from rest_framework import routers
-from polls.views import PollViewSet, QuestionViewSet, FinishedPollViewSet
+from polls.views import PollViewSet, QuestionViewSet, FinishedPollViewSet, AnswerViewSet
 
 router = routers.DefaultRouter()
 router.register(r'poll', PollViewSet)
 router.register(r'question', QuestionViewSet)
 router.register(r'mypolls', FinishedPollViewSet)
+router.register(r'answers', AnswerViewSet)
 
 
 urlpatterns = [

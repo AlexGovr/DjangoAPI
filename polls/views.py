@@ -2,7 +2,7 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from .models import FinishedPoll, Poll, Question
+from .models import FinishedPoll, Poll, Question, Answer
 from .serializers import PollSerializer, QuestionSerializer, FinishedPollSerializer, AnswerSerializer
 
 
@@ -51,7 +51,7 @@ class FinishedPollViewSet(viewsets.ModelViewSet):
     def list_mypolls(self, request, *args, **kwargs):
         user_id = request.data.get('id')
         if not user_id:
-            return Response({'details': 'user is needed'})
+            return Response({'details': 'user id is needed'})
         self.queryset = FinishedPoll.objects.filter(user_id=user_id)
 
         return super().list(request, *args, **kwargs)
@@ -62,3 +62,25 @@ class FinishedPollViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)})
 
+
+class AnswerViewSet(viewsets.ModelViewSet):
+    queryset = Answer.objects.none()
+    serializer_class = AnswerSerializer
+
+    @action(detail=False, url_path='show')
+    def list_mypolls(self, request, *args, **kwargs):
+        print('here')
+        fpoll_id = request.data.get('finished_poll_id')
+        if not fpoll_id:
+            return Response({'details': 'finished_poll_id is needed'})
+        self.queryset = Answer.objects.filter(finished_poll=fpoll_id)
+        print(self.queryset)
+
+        return super().list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        return super().create(request, *args, **kwargs)
+        try:
+            return super().create(request, *args, **kwargs)
+        except Exception as e:
+            return Response({'error': str(e)})
