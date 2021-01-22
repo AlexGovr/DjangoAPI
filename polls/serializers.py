@@ -21,7 +21,7 @@ class FinishedPollSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FinishedPoll
-        fields = ['user_id', 'poll_id', 'id']
+        fields = ['user_id', 'poll', 'id']
 
 
 class AnswerSerializer(serializers.ModelSerializer):
