@@ -16,7 +16,6 @@ class BasicViewSet(viewsets.ModelViewSet):
             # override default response as it raises ConnectionResetError: [WinError 10054]
             return Response({'status': 'successfuly deleted'})
         except Exception as e:
-            print(e)
             return Response({'error': str(e)})
     
     def create(self, request, *args, **kwargs):
@@ -48,16 +47,18 @@ class FinishedPollViewSet(viewsets.ModelViewSet):
     queryset = FinishedPoll.objects.none()
     serializer_class = FinishedPollSerializer
 
-    def list(self, request, *args, **kwargs):
-        user_id = request.data['id']
+    @action(detail=False, url_path='show')
+    def list_mypolls(self, request, *args, **kwargs):
+        user_id = request.data.get('id')
+        if not user_id:
+            return Response({'details': 'user is needed'})
         self.queryset = FinishedPoll.objects.filter(user_id=user_id)
+
         return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        print('here')
         try:
             return super().create(request, *args, **kwargs)
         except Exception as e:
-            print(e)
             return Response({'error': str(e)})
 
