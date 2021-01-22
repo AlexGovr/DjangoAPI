@@ -28,4 +28,4 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ['text', 'question_id', 'id']
+        fields = ['text', 'question', 'id', 'finished_poll']
