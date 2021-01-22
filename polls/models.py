@@ -25,6 +25,7 @@ class Poll(models.Model):
     def __str__(self):
         return f'{self.name}: {self.date_start} -- {self.date_end}'
 
+
 class FinishedPoll(models.Model):
     poll = models.ForeignKey(Poll, blank=True, on_delete=models.CASCADE)
     user_id = models.IntegerField(blank=True)
@@ -35,7 +36,7 @@ class FinishedPoll(models.Model):
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, blank=True, on_delete=models.CASCADE)
-    finished_poll = models.ForeignKey(FinishedPoll, blank=True, on_delete=models.CASCADE, null=True)
+    finished_poll = models.ForeignKey(FinishedPoll, blank=True, on_delete=models.CASCADE)
     text = models.CharField(default='', null=True, max_length=360)
 
     def __str__(self):
