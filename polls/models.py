@@ -40,5 +40,11 @@ class Answer(models.Model):
     finished_poll = models.ForeignKey(FinishedPoll, related_name='answers', blank=True, on_delete=models.CASCADE)
     text = models.CharField(default='', null=True, max_length=360)
 
+    def save(self, *args, **kwargs):
+        the_same_answer = Answer.objects.filter(question=self.question, finished_poll=self.finished_poll)
+        if the_same_answer:
+            raise Exception('there is already an answer with same question_id and finished_poll_id')
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return f'question_id: {self.question.id}, finished_poll_id: {self.finished_poll.id}, text: {self.text}'
