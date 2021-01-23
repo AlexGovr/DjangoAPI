@@ -24,7 +24,6 @@ class BasicViewSet(viewsets.ModelViewSet):
         try:
             return super().create(request, *args, **kwargs)
         except Exception as e:
-            print(e)
             return Response({'error': str(e)})
 
     def not_auth_response(self):
@@ -53,14 +52,9 @@ class FinishedPollViewSet(viewsets.ModelViewSet):
         if not user_id:
             return Response({'details': 'user id is needed'})
         self.queryset = FinishedPoll.objects.filter(user_id=user_id)
-
-        return super().list(request, *args, **kwargs)
-
-    def create(self, request, *args, **kwargs):
-        try:
-            return super().create(request, *args, **kwargs)
-        except Exception as e:
-            return Response({'error': str(e)})
+        
+        r = super().list(request, *args, **kwargs)
+        return r
 
 
 class AnswerViewSet(viewsets.ModelViewSet):
@@ -69,18 +63,10 @@ class AnswerViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, url_path='show')
     def list_mypolls(self, request, *args, **kwargs):
-        print('here')
         fpoll_id = request.data.get('finished_poll_id')
         if not fpoll_id:
             return Response({'details': 'finished_poll_id is needed'})
         self.queryset = Answer.objects.filter(finished_poll=fpoll_id)
-        print(self.queryset)
 
         return super().list(request, *args, **kwargs)
 
-    def create(self, request, *args, **kwargs):
-        return super().create(request, *args, **kwargs)
-        try:
-            return super().create(request, *args, **kwargs)
-        except Exception as e:
-            return Response({'error': str(e)})
