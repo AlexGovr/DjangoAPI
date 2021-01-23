@@ -1,4 +1,5 @@
 from datetime import datetime
+from re import finditer
 from django.db import models
 
 
@@ -36,8 +37,8 @@ class FinishedPoll(models.Model):
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, blank=True, on_delete=models.CASCADE)
-    finished_poll = models.ForeignKey(FinishedPoll, blank=True, on_delete=models.CASCADE)
+    finished_poll = models.ForeignKey(FinishedPoll, related_name='answers', blank=True, on_delete=models.CASCADE)
     text = models.CharField(default='', null=True, max_length=360)
 
     def __str__(self):
-        return f'q_id: {self.question.id}, finidhed_poll_id: {self.finished_poll.id}, text: {self.text}'
+        return f'question_id: {self.question.id}, finished_poll_id: {self.finished_poll.id}, text: {self.text}'
