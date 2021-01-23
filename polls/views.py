@@ -9,8 +9,10 @@ from .serializers import PollSerializer, QuestionSerializer, FinishedPollSeriali
 class BasicViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
+        # check user is auth
         if not request.user.is_authenticated:
             return self.not_auth_response()
+        # execute the command with exception feedback provided
         try:
             super().destroy(request, *args, **kwargs)
             # override default response as it raises ConnectionResetError: [WinError 10054]
@@ -19,8 +21,10 @@ class BasicViewSet(viewsets.ModelViewSet):
             return Response({'error': str(e)})
     
     def create(self, request, *args, **kwargs):
+        # check user is auth
         if not request.user.is_authenticated:
             return self.not_auth_response()
+        # execute the command with exception feedback provided
         try:
             return super().create(request, *args, **kwargs)
         except Exception as e:
@@ -43,6 +47,7 @@ class QuestionViewSet(BasicViewSet):
 
 
 class FinishedPollViewSet(viewsets.ModelViewSet):
+    '''viewset will only return answers for user specified in request data'''
     queryset = FinishedPoll.objects.none()
     serializer_class = FinishedPollSerializer
 
@@ -53,11 +58,11 @@ class FinishedPollViewSet(viewsets.ModelViewSet):
             return Response({'details': 'user id is needed'})
         self.queryset = FinishedPoll.objects.filter(user_id=user_id)
         
-        r = super().list(request, *args, **kwargs)
-        return r
+        return super().list(request, *args, **kwargs)
 
 
 class AnswerViewSet(viewsets.ModelViewSet):
+    '''viewset will only return answers for finished poll specified in request data'''
     queryset = Answer.objects.none()
     serializer_class = AnswerSerializer
 
